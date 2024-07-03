@@ -2,7 +2,7 @@ import os
 from Crypto.Cipher import AES
 from Crypto.Util.Padding import pad
 import base64
-from binascii import hexlify
+
 
 HIDDEN_STRING = "Um9sbGluJyBpbiBteSA1LjAKV2l0aCBteSByYWctdG9wIGRvd24gc28gbXkgaGFpciBjYW4gYmxvdwpUaGUgZ2lybGllcyBvbiBzdGFuZGJ5IHdhdmluZyBqdXN0IHRvIHNheSBoaQpEaWQgeW91IHN0b3A/IE5vLCBJIGp1c3QgZHJvdmUgYnkK"
 KEY = os.urandom(16)
@@ -24,7 +24,7 @@ for i in range(1,20):
         break
 # Now I know the key size is 16
 # Now I will decrypt the HIDDEN_STRING byte by byte
-def decrypt_hidden_string():
+def attack():
     KEY_SIZE = 16
     hidden_string = b''
     for i in range(1, len(HIDDEN_STRING)+1):
@@ -37,7 +37,7 @@ def decrypt_hidden_string():
                 break
     return hidden_string
 
-string = decrypt_hidden_string()
+string = attack()
 # string[-1] == 1 so The padding is 1 byte
 string = string[:-1]
 assert string.decode() == base64.b64decode(HIDDEN_STRING).decode() , "Failed"
