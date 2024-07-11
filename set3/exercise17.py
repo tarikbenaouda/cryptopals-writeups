@@ -3,6 +3,7 @@ import os
 import random
 from Crypto.Cipher import AES
 from Crypto.Util.Padding import pad, unpad
+from Crypto.Util.strxor import strxor_c
 from base64 import b64decode
 
 class Exercise17:
@@ -84,7 +85,7 @@ def decrypt(real_ct,ciphertext, iv, padding_len):
         new_ct = (
             new_ct[:-16 - padding_len - 1] +
             bytes([i]) +
-            bytes([b ^ padding_len ^ (padding_len + 1) for b in new_ct[-16 - padding_len:-16]]) +
+            strxor_c(new_ct[-16 - padding_len:-16], (padding_len + 1) ^ padding_len) +
             new_ct[-16:]
         )
         if padding_oracle(new_ct, iv):
