@@ -7,6 +7,7 @@ from Crypto.Util.strxor import strxor_c
 from base64 import b64decode
 
 class Exercise17:
+    KEY_SIZE = 16
     data = list(map(b64decode, [
         'MDAwMDAwTm93IHRoYXQgdGhlIHBhcnR5IGlzIGp1bXBpbmc=',
         'MDAwMDAxV2l0aCB0aGUgYmFzcyBraWNrZWQgaW4gYW5kIHRoZSBWZWdhJ3MgYXJlIHB1bXBpbic=',
@@ -36,6 +37,8 @@ class Exercise17:
     
 Exercise17 = Exercise17()
 
+KEY_SIZE = Exercise17.KEY_SIZE
+
 cryptogram = Exercise17.encrypt()
 
 # This will raise an exception if the padding is invalid
@@ -53,16 +56,16 @@ def padding_oracle(ciphertext, iv):
 # The first bytes that will not return a padding error 
 # will be the last byte of the unpadded plaintext
 def detect_padding(cryptogram):
-    for i in range(1,17):
+    for i in range(1,KEY_SIZE + 1):
         # I have added the IV as first block to get The padding in case of len(ciphertext) = 16
         iv = cryptogram['iv']
         ciphertext = iv + cryptogram['ciphertext']
-        ciphertext = ciphertext[:-16 - i] + bytes([ciphertext[-16 - i] ^ 1]) + ciphertext[-16 - i + 1:]
+        ciphertext = ciphertext[:-KEY_SIZE - i] + bytes([ciphertext[-KEY_SIZE - i] ^ 1]) + ciphertext[-KEY_SIZE - i + 1:]
     
         if padding_oracle(ciphertext, iv):
             return bytes([i - 1]) * (i - 1)
     else:
-        return bytes([16]) * 16
+        return bytes([KEY_SIZE]) * KEY_SIZE
 
 padding = detect_padding(cryptogram)
 # At this point I know The padding of the ciphertext 
@@ -71,26 +74,26 @@ padding = detect_padding(cryptogram)
 # So I decided to decrypt the whole plaintext recursively byte by byte :)
 def decrypt(real_ct,ciphertext, iv, padding_len):
     last_byte = b''
-    # Handling case of padding = 16
-    if padding_len == 16:
+    # Handling case of padding = KEY_SIZE
+    if padding_len == KEY_SIZE:
         padding_len = 0
-        real_ct = real_ct[:-16]
+        real_ct = real_ct[:-KEY_SIZE]
         ciphertext = real_ct # We need to remove the last block
     # Stopping condition
-    if len(ciphertext) == 16:
+    if len(ciphertext) == KEY_SIZE:
         return b''
     for i in range(256):
         new_ct = original = ciphertext # IV will be prepended to in the first call
         # I will xor the last byte of the last block with i 
         new_ct = (
-            new_ct[:-16 - padding_len - 1] +
+            new_ct[:-KEY_SIZE - padding_len - 1] +
             bytes([i]) +
-            strxor_c(new_ct[-16 - padding_len:-16], (padding_len + 1) ^ padding_len) +
-            new_ct[-16:]
+            strxor_c(new_ct[-KEY_SIZE - padding_len:-KEY_SIZE], (padding_len + 1) ^ padding_len) +
+            new_ct[-KEY_SIZE:]
         )
         if padding_oracle(new_ct, iv):
             last_byte = bytes(
-                [original[-16 - padding_len - 1] ^ i ^ (padding_len + 1)]
+                [original[-KEY_SIZE - padding_len - 1] ^ i ^ (padding_len + 1)]
                 )
             break
 
