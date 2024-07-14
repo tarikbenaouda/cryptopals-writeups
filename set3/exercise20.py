@@ -12,7 +12,7 @@ decrypt_ctr = Exercise18.decrypt_ctr
 
 key = get_random_bytes(KEY_SIZE)  # 16 bytes key for AES-128
 nonce = bytes(8) # fixing nonce to 0
-real_keystreams = encrypt_ctr(key, nonce, bytes(KEY_SIZE*4))
+
 ciphertexts = []
 with open('set3/20.txt') as f:
     lines = f.readlines()
@@ -24,23 +24,13 @@ with open('set3/20.txt') as f:
 # Now we have ciphertexts with same length and XORed against the same keystream with length
 # of the ciphertexts. We can now use the same technique as in set1/exercise6.py to decrypt
 
-def transpose_blocks(bt, key_size):
-    blocks = []
-    for i in range(key_size):
-        blocks.append(bt[i::key_size])
-    return blocks
-
-
-blocks = transpose_blocks(b''.join(ciphertexts), len(ciphertexts[0]))
-
 decrypted_blocks = []
-for i,block in enumerate(blocks):
+for i,block in enumerate(zip(*ciphertexts)):
+    block = bytes(block)
     for k in range(256):
         decrypted = xor(block, k)
         if all([char in list(bytes(printable,"utf-8")) for char in decrypted]):
-            # print("###########################")
             decrypted_blocks.append({'key':i, 'plaintext':decrypted})
-            # print(decrypted.decode())
 
 keys =  list(map(lambda x: x['key'] , decrypted_blocks))
 repeated_keys = list(set([item for item in keys if keys.count(item) > 1]))
@@ -61,10 +51,10 @@ for k in repeated_keys:
 # Now we have the correct decrypted blocks , Just we still need to transpose them back
 decrypted_blocks = list(map(lambda x: x['plaintext'], decrypted_blocks))
 
-decrypted_blocks = transpose_blocks(b''.join(decrypted_blocks), len(decrypted_blocks[0]))
+decrypted_blocks = [bytes(block) for block in zip(*decrypted_blocks)]
 
 # Now we have the decrypted blocks, Let's print them (some of them still uncomplete we need 
 # to decrypt the by guessing as we did in set3/exercise19.py
-print(len(decrypted_blocks))    
+
 for block in decrypted_blocks:
     print(block.decode())
