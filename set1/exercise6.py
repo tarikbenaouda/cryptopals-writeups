@@ -1,6 +1,5 @@
 from base64 import b64decode
 from string import printable
-from binascii import hexlify, unhexlify
 
 def hamming_distance(s1, s2):
     if len(s1) != len(s2):
