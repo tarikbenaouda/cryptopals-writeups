@@ -23,7 +23,6 @@ with open('set3/20.txt') as f:
 
 # Now we have ciphertexts with same length and XORed against the same keystream with length
 # of the ciphertexts. We can now use the same technique as in set1/exercise6.py to decrypt
-
 decrypted_blocks = []
 for i,block in enumerate(zip(*ciphertexts)):
     block = bytes(block)
