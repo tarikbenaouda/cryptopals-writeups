@@ -45,6 +45,9 @@ class MT19937:
 
         self.index += 1
         return self.int_32(y) / float(0xFFFFFFFF)
+    def yield_random(self):
+        while True:
+            yield self.random()
 
 # Usage example
 if __name__ == "__main__":
