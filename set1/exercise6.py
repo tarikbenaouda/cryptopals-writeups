@@ -6,7 +6,7 @@ def hamming_distance(s1, s2):
         raise ValueError("Strings must be of equal length")
     return sum(1 for a, b in zip(s1, s2) if a != b)
 average_distances = []
-with open("./6.txt") as f:
+with open("set1/6.txt") as f:
     cipher_text = b64decode(f.read())
     for key_size in range(2, 41):
         blocks = [cipher_text[i:i+key_size] for i in range(0, len(cipher_text), key_size)]
@@ -23,7 +23,7 @@ def transpose_blocks(bt, key_size):
         blocks.append(bt[i::key_size])
     return blocks
 
-with open("./6.txt") as f:
+with open("set1/6.txt") as f:
     cipher_text = b64decode(f.read())
     blocks = transpose_blocks(cipher_text, 29)
     block = blocks[2]  # I did it by iterating over all blocks and checking the output
@@ -35,7 +35,7 @@ with open("./6.txt") as f:
             print(c,decrypted.decode())
 
 #The key is "Terminator X: Bring the noise"
-with open("./6.txt") as f:
+with open("set1/6.txt") as f:
     cipher_text = b64decode(f.read())
     key = b"Terminator X: Bring the noise"
     plain_text = bytes([byte ^ key[i % len(key)] for i, byte in enumerate(cipher_text)])

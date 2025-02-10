@@ -10,6 +10,6 @@ def exercise3(hex_encoded_string):
         if all([char in list(bytes(printable,"utf-8")) for char in decrypted]):
             print(c,decrypted.decode())
 
-with open("./4.txt") as f:
+with open("set1/4.txt") as f:
     for line in f:
         exercise3(line.strip())
