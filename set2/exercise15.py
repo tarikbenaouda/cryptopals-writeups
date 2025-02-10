@@ -12,4 +12,4 @@ def validate(plaintext,block_size):
             raise Exception("Invalid padding")
     return True
 
-assert validate(b'helloworldhelloworld\x02\x02',11)
+assert validate(b'helloworldhelloworld\x02\x02',11), "Test case 1 failed"

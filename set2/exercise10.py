@@ -19,7 +19,7 @@ def decrypt_aes_ecb(ciphertext, key):
         plaintext = xor_bytes(cipher.decrypt(block), prev_block) + plaintext
     return plaintext
 
-with open('./10.txt', 'r') as f:
+with open('set2/10.txt', 'r') as f:
     ciphertext = b64decode(f.read())
     key = b'YELLOW SUBMARINE'
     print(decrypt_aes_ecb(ciphertext, key).decode('utf-8'))
